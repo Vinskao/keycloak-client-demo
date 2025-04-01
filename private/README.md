@@ -14,6 +14,7 @@
 - BACKEND_URL: "http://localhost:8080"
 - realm: "MLIExternalRealm"
 - clientId: "test"
+
 與SSO負責人討論參數設定，設定好後，login.html可以合成入登入頁面
 
 ## 2.2 `KeycloakController.java`修改
@@ -21,6 +22,7 @@
 - `private String clientId = "test";`
 - `private String clientSecret = "ILrhid1S5brjy21p9k6a0NU3DXsOTfEa";`
 - `private String realm = "MLIExternalRealm";`
+
 與SSO負責人討論參數設定，設定好後，KeycloakController.java即完成設定
 
 ## 3. 客製化：決定哪幾頁需要驗證登入才能訪問

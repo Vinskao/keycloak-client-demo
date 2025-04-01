@@ -13,6 +13,7 @@
 - url: "http://localhost:8080"
 - realm: "MLIExternalRealm"
 - clientId: "test-public"
+
 與SSO負責人討論參數設定，設定好後，App.js可以合成入登入頁面
 
 ## 3. 客製化：決定哪幾頁需要驗證登入才能訪問
