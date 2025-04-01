@@ -26,5 +26,4 @@
 與SSO負責人討論參數設定，設定好後，KeycloakController.java即完成設定
 
 ## 3. 客製化：決定哪幾頁需要驗證登入才能訪問
-需要登入的頁面，在進入前用Dom控制先進行"驗證是否已登入"，驗證邏輯在login.html的verifyToken方法，可直接移植
-
+在進入需要登入的頁面前，透過 DOM 控制先執行「登入狀態驗證」，驗證邏輯位於 login.html的verifyToken方法，可直接移植使用。
