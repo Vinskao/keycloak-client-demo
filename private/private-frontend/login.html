@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    .login-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .login-button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .login-button:hover {
+      background-color: #3367d6;
+    }
+    .logout-button {
+      background-color: #ea4335;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+    .logout-button:hover {
+      background-color: #d33426;
+    }
+    .session-notice {
+      color: #757575;
+      font-size: 12px;
+      margin-top: 15px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>歡迎</h1>
+    <p id="statusText">請點擊下方按鈕進行登入</p>
+    <button class="login-button" id="loginButton">登入系統</button>
+    <div id="userInfo" style="margin-top: 20px; display: none;">
+      <h2>登入成功</h2>
+      <p id="username"></p>
+      <p id="email"></p>
+      <p class="session-notice">注意：此登錄會話由 introspect 判斷，並非依賴 cookie</p>
+      <button class="logout-button" id="logoutButton">登出系統</button>
+    </div>
+  </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const clientId = "test";
+  const realm = "MLIExternalRealm";
+  const BACKEND_URL = "http://localhost:8081";
+  const redirectUri = BACKEND_URL + "/keycloak/redirect";
+
+  // 讀取 URL 參數（同時取得 accessToken 與 refreshToken）
+  const urlParams = new URLSearchParams(window.location.search);
+  const usernameParam = urlParams.get('username');
+  const emailParam = urlParams.get('email');
+  const accessToken = urlParams.get('token');
+  const refreshToken = urlParams.get('refreshToken'); // 確保後端 redirect 時也帶入此參數
+
+  async function verifyToken(token) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/keycloak/introspect?token=${encodeURIComponent(token)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return false;
+    }
+  }
+
+  if (accessToken) {
+    verifyToken(accessToken).then(isValid => {
+      if (isValid) {
+        document.getElementById('loginButton').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+        document.getElementById('username').textContent = `用戶名: ${usernameParam || '未知'}`;
+        document.getElementById('email').textContent = `郵箱: ${emailParam || '未知'}`;
+        document.getElementById('statusText').textContent = "使用者已登入";
+      } else {
+        document.getElementById('statusText').textContent = "登入會話已失效，請重新登入";
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    });
+  }
+
+  document.getElementById('loginButton').addEventListener('click', function() {
+    const authorizationUrl = `http://localhost:8080/realms/${realm}/protocol/openid-connect/auth?response_type=code&scope=openid&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = authorizationUrl;
+  });
+
+  // 修改 logout 請求，使用 refreshToken 而非 accessToken
+  document.getElementById('logoutButton').addEventListener('click', async function() {
+    try {
+      const response = await fetch(`${BACKEND_URL}/keycloak/logout?refreshToken=${encodeURIComponent(refreshToken)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        mode: 'cors'
+      });
+      if (response.ok) {
+        alert('登出成功');
+      } else {
+        alert('登出失敗');
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert('登出失敗');
+    } finally {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      document.getElementById('userInfo').style.display = 'none';
+      document.getElementById('loginButton').style.display = 'inline-block';
+      document.getElementById('statusText').textContent = "請點擊下方按鈕進行登入";
+    }
+  });
+});
+
+</script>
+</body>
+</html>

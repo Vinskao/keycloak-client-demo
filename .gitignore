@@ -1,0 +1,52 @@
+# Node.js
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+.mvn/
+
+# 環境變數檔案
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python
+*.py[cod]
+__pycache__/
+
+# Java / Maven build 產出
+target/
+build/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Maven Wrapper (上傳 properties 檔案以便使用 wrapper，但排除 jar)
+.mvn/wrapper/maven-wrapper.jar
+!/.mvn/wrapper/maven-wrapper.properties
+
+# IDE / Editor
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# 作業系統產生檔案
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# 日誌和暫存資料
+logs/
+*.log
+coverage/
+dist/
