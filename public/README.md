@@ -1,11 +1,11 @@
 ## 使用建議
-- 適用專案：只有前端、有react/angualr/vue框架
-- 以下所有操作都適用react/angualr/vue框架，但本專案是react，angualr/vue需自行確認套件安裝方式
+- 適用專案：只有前端、需有npm管理的專案
+- 以下所有操作適用不同框架，但本專案是react，其他框架需自行確認套件安裝方式
 - 將所有所需檔案複製到自己的專案後再調整
 
 ## 1. 所有建置所需檔案
 1. `src\App.js`，需要修改
-2. `npm install keycloak-js`，完全不要修改，此套件適用react/angualr/vue
+2. `npm install`，下載Keycloak所需套件，此套件適用任何有npm管理的前端專案
 3. `src\keycloak.js`，完全不要修改，從`public\node_modules\keycloak-js\lib\keycloak.js`複製過來
 
 ## 2. `src\App.js`修改
