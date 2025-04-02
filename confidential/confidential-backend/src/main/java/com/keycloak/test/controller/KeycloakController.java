@@ -93,7 +93,7 @@ public class KeycloakController {
             
             // Redirect to client with user info
             response.sendRedirect(
-                "http://127.0.0.1:5500/private/private-frontend/login.html"
+                "http://127.0.0.1:5500/confidential/confidential-frontend/login.html"
                 + "?username=" + preferredUsername
                 + "&email=" + email
                 + "&token=" + accessToken
