@@ -132,64 +132,72 @@ public class KeycloakController {
 
     @CrossOrigin
     @GetMapping("/introspect")
-    public ResponseEntity<?> introspectToken(@RequestParam("token") String token) {
+    public ResponseEntity<?> introspectToken(
+            @RequestParam("token") String token,
+            @RequestParam(value = "refreshToken", required = false) String refreshToken) {
+        
         String introspectUrl = "http://localhost:8080/realms/MLIExternalRealm/protocol/openid-connect/token/introspect";
-
+    
         try {
+            // 先尝试检查原始token是否有效
             MultiValueMap<String, String> bodyParams = new LinkedMultiValueMap<>();
             bodyParams.add("client_id", clientId);
             bodyParams.add("client_secret", clientSecret);
             bodyParams.add("token", token);
-
+    
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
-
+    
             ResponseEntity<Map> introspectResponse = restTemplate.exchange(introspectUrl, HttpMethod.POST, entity,
                     Map.class);
             Map<String, Object> introspectionResult = introspectResponse.getBody();
-
+    
+            // 如果token有效，直接返回结果
             if (introspectionResult != null && Boolean.TRUE.equals(introspectionResult.get("active"))) {
                 return ResponseEntity.ok(introspectionResult);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is not active or invalid.");
+            } 
+            // 如果token无效且提供了refreshToken，尝试刷新token
+            else if (refreshToken != null && !refreshToken.isEmpty()) {
+                log.info("Access token is invalid, attempting to refresh...");
+                
+                // 调用刷新token的逻辑
+                String tokenUrl = "http://localhost:8080/realms/MLIExternalRealm/protocol/openid-connect/token";
+                
+                MultiValueMap<String, String> tokenParams = new LinkedMultiValueMap<>();
+                tokenParams.add("client_id", clientId);
+                tokenParams.add("client_secret", clientSecret);
+                tokenParams.add("refresh_token", refreshToken);
+                tokenParams.add("grant_type", "refresh_token");
+                
+                HttpHeaders refreshHeaders = new HttpHeaders();
+                refreshHeaders.set("Content-Type", "application/x-www-form-urlencoded");
+                HttpEntity<MultiValueMap<String, String>> refreshEntity = new HttpEntity<>(tokenParams, refreshHeaders);
+    
+                try {
+                    ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, refreshEntity, Map.class);
+                    
+                    if (tokenResponse.getStatusCode().is2xxSuccessful()) {
+                        // 成功刷新token，返回新token信息
+                        Map<String, Object> tokenInfo = tokenResponse.getBody();
+                        tokenInfo.put("refreshed", true); // 添加标记表示这是刷新的结果
+                        return ResponseEntity.ok(tokenInfo);
+                    }
+                } catch (Exception e) {
+                    log.error("Error refreshing token", e);
+                    // 刷新失败，继续走下面的失败流程
+                }
             }
+            
+            // 如果token无效且refreshToken也无效或未提供
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("active", false, "error", "Token is not active or invalid, and refresh failed.")
+            );
         } catch (Exception e) {
-            log.error("Error introspecting token", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error introspecting token.");
-        }
-    }
-
-    @CrossOrigin
-    @PostMapping("/createUser")
-    public ResponseEntity<?> createUser(@RequestBody Map<String, String> userDetails,
-            @RequestParam("accessToken") String accessToken) {
-
-        try {
-            String url = "http://localhost:8080/admin/realms/" + realm + "/users";
-            Map<String, Object> userRepresentation = new HashMap<>();
-            userRepresentation.put("username", userDetails.get("username"));
-            userRepresentation.put("email", userDetails.get("email"));
-            userRepresentation.put("firstName", userDetails.get("firstName"));
-            userRepresentation.put("lastName", userDetails.get("lastName"));
-            userRepresentation.put("enabled", true);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(userRepresentation, headers);
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return ResponseEntity.ok("User created successfully.");
-            } else {
-                return ResponseEntity.status(response.getStatusCode()).body("Failed to create user.");
-            }
-
-        } catch (Exception e) {
-            log.error("Error creating user", e);
-            return ResponseEntity.status(500).body("Error creating user.");
+            log.error("Error during token introspection/refresh", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of("error", "Error processing token.")
+            );
         }
     }
 }
