@@ -46,8 +46,6 @@ private String clientSecret = "ILrhid1S5brjy21p9k6a0NU3DXsOTfEa";  // 你的客�
 private String realm = "MLIExternalRealm";  // 你的 SSO Realm 名稱
 ```
 💡 **請與 SSO 負責人確認這些參數，確保與 SSO 伺服器的設定匹配。**
-💡 **請與 SSO 負責人確認這些參數，確保與 SSO 伺服器的設定匹配。**
-
 ---
 
 # 3. 登入驗證與頁面權限控制
