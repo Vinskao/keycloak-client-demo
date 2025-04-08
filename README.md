@@ -1,6 +1,55 @@
 ## 簡介
 本專案提供 SSO 客戶端 (SSO Client) 串接示範，幫助開發者快速了解如何將應用程式與 單一登入 (Single Sign-On, SSO) 系統整合。透過本範例，您將學習如何在前端或前後端環境下，使用標準 OAuth 2.0 或 OpenID Connect (OIDC) 流程完成身份驗證與授權。
 
+開始專案前你應該先與SSO負責人員做需求訪談。
+
+## 需求訪談前你應該要準備的資訊
+- IP	
+- 應用系統名稱
+- 應用系統英文簡稱
+- 需求摘要
+- REALM (共同討論決定)
+- CLIENTID (共同討論決定)
+- validRedirectUri (共同討論決定)
+
+validRedirectUri需要符合`http://<host>/<prefix>/*`，如果您host上有多系統，一定要用prefix分流，如果直接開放`<host>/*`，生怕會有住在host上的不明程式可以被sso連。
+
+需求訪談後如確定執行，請填寫 `S207-01-系統操作暨變更申請單`
+
+## 需求訪談後你會取得的資訊
+- REALM
+- CLIENTID
+- SSO_URL
+- SECRET (Confidential Client適用)
+
+這些設定值要放在你的程式中。
+
+## 架構
+SSO 登入的最大好處是可以根據功能區分成受保護區域/未受保護區域，受保護區域需要登入才能訪問。
+### Confidential Client
+![alt text](struct1.png)
+
+### Public Client
+![alt text](struct2.png)
+
+對user而言，我對多個系統的的登入有效時間都由同一個系統管理，失效前不用重複登入。
+
+對開發者而言，有分為串接面及實作面。
+
+#### 串接面
+Confidential/Public都是從前端取去呼叫一個能與SSO互動的套件，去進行`登入`/`登出`/`檢查`請求，Confidential是將keycloak互動套件透過POM導入，再透過controller實作端點，public是將keycloak互動套件透過npm導入，直接調用專屬方法去請求SSO。
+
+所以開發者只需要拿這demo程式去修改Confidential的controller或public的請求方法即可。
+
+更棒的是，總共需要改的東西只有realm、clientId、ssoUrl、frontendUrl、backendUrl(適用Confidential)、secret(適用Confidential)共6個變數，所以只要去環境變數設定就好。
+
+#### 實作面
+SSO能確保你可以使用其登入驗證功能，但要保護你的訪問權，要自己在程式中設定權限，通常建議前端專案搭配router使用，後端專案搭配spring security使用，可以針對特定url去卡關驗證機制，用`檢查`過濾，沒通過就轉導到`登入`。
+
+總共只有3個function：`登入`/`登出`/`檢查`，可自由發揮如何鑲入程式。
+
+* 你不需要自行實作任何`登入`/`登出`/`檢查`邏輯，只需要呼叫這三個function。
+
 ## 這個專案能做什麼？
 模擬 SSO 串接流程：提供 Confidential Client (需要後端) 與 Public Client (僅前端) 兩種應用場景。
 示範 OAuth 2.0 / OIDC 認證流程：包括 登入 (Login)、登出 (Logout) 以及 Token 交換 等操作。
@@ -14,12 +63,9 @@
 ## 如何選擇適合的範例？
 請根據您的開發需求選擇對應的資料夾：
 - 前後端皆有 (Full-stack) → confidential 資料夾 (Confidential Client)
-適用於需要後端協助處理授權碼交換的應用，例如 Server-Side Web Apps。
 - 僅有前端 (Frontend-only) → public 資料夾 (Public Client)
-適用於 純前端應用 (如 SPA 應用) 直接與 SSO 伺服器進行驗證。
 
-## 下一步：開始建置環境！
-請繼續閱讀 confidential/ public 資料夾內的README，依照步驟完成 SSO 串接！ 🚀
+進入對應資料夾後，再按照內部文件建置範例專案完成 SSO 串接！
 
 ## 延伸：什麼是OAuth 2.0 及 OpenID Connect (OIDC)？
 OAuth 2.0 和 OpenID Connect (OIDC) 是現代網路應用程式中 身份驗證 (Authentication) 與 授權 (Authorization) 的標準協議

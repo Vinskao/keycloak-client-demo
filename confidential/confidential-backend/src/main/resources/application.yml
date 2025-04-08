@@ -2,24 +2,14 @@ server:
   port: 8081
   servlet:
     context-path: /
-
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/realms/MLIExternalRealm
-          jwk-set-uri: http://localhost:8080/realms/MLIExternalRealm/protocol/openid-connect/certs
-  # Database configuration removed
-
 keycloak:
   auth-server-url: http://localhost:8080/
   realm: MLIExternalRealm
-  resource: client_id # Ensure this matches your Keycloak client's `client_id`
+  clientId: test # Ensure this matches your Keycloak client's `client_id`
   public-client: false
   cors: true
   credentials:
-    secret: ILrhid1S5brjy21p9k6a0NU3DXsOTfEa
+    secret: d4krdfaNRp4tZwR1ZQ2bMRBfVkEx0Bks
 
   bearer-only: true
   security-constraints:
@@ -33,3 +23,11 @@ springdoc:
     enabled: true
   swagger-ui:
     path: /swagger-ui.html
+
+# 自定義參數
+sso:
+  url: http://localhost:8080
+backend:
+  url: http://localhost:8081
+frontend:
+  url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html

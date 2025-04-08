@@ -14,22 +14,7 @@
 
 ---
 
-# 2. 必要檔案與修改說明
 
-## 2.1 前端 (`confidential-frontend`)
-
-📂 **必要檔案**：  
-- `confidential-frontend/login.html` (需修改，可支援任何前端框架/原生 HTML)
-
-📌 **修改內容**：請調整以下 3 個參數，確保它們符合您的 SSO 設定：  
-
-```javascript
-const BACKEND_URL = "http://localhost:8080";  // 你的後端服務地址
-const realm = "MLIExternalRealm";  // 你的 SSO Realm 名稱
-const clientId = "test";  // 你的客戶端 ID
-```
-
-💡 **設定完成後**，`login.html` 可嵌入至您的登入頁面。
 
 ---
 
@@ -42,26 +27,13 @@ const clientId = "test";  // 你的客戶端 ID
 
 ```java
 private String clientId = "test";  // 你的客戶端 ID
-private String clientSecret = "ILrhid1S5brjy21p9k6a0NU3DXsOTfEa";  // 你的客戶端密鑰
+private String clientSecret = "d4krdfaNRp4tZwR1ZQ2bMRBfVkEx0Bks";  // 你的客戶端密鑰
 private String realm = "MLIExternalRealm";  // 你的 SSO Realm 名稱
 ```
 💡 **請與 SSO 負責人確認這些參數，確保與 SSO 伺服器的設定匹配。**
 ---
 
-# 3. 登入驗證與頁面權限控制
 
-## 3.1 決定哪些頁面需要登入驗證
-
-✅ **若某些頁面需登入後才能訪問**，請在進入該頁面前，透過 **DOM 控制** 先執行「登入狀態驗證」。  
-
-📌 **驗證邏輯位於 `login.html` 的 `verifyToken` 方法**，可直接移植使用。  
-
-💡 **應用示例**：  
-```javascript
-if (!verifyToken()) {
-    window.location.href = "/login.html";  // 若未登入，則導向登入頁面
-}
-```
 
 ---
 
