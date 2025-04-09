@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const accessToken = urlParams.get('token');
     const refreshToken = urlParams.get('refreshToken'); // 確保後端 redirect 時也帶入此參數
 
+    // *非必要* 
     // 此判斷式可以被移動到其他適合的地方，另如router中的判斷式
     // 如果存在 accessToken，則透過 verifyToken 函式來驗證存取憑證是否仍有效。
     // 若驗證通過，則隱藏登入按鈕並顯示使用者資訊，將用戶名、電子郵件及狀態訊息更新成「使用者已登入」。
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // (非必須) 每 10 秒呼叫一次 verifyToken 來檢查登入狀態
+        // *非必要* 每 10 秒呼叫一次 verifyToken 來檢查登入狀態
         setInterval(function () {
             verifyToken(accessToken).then(isValid => {
                 if (!isValid) {
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * 勿修改
+     * *必要* 
      * 驗證存取憑證 (access token) 是否仍有效。
      * <p>
      * 此函式會呼叫後端 /keycloak/introspect API，
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         }
     }
-
+    // *必要* 
     // login 請求，取得 accessToken，30秒後會過期，換成refreshToken，如果不希望按紐形式，可把內容抽換成別種function
     document.getElementById('loginButton').addEventListener('click', function () {
         // 勿修改
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = authorizationUrl;
     });
 
+    // *必要* 
     // logout 請求，使用 refreshToken，如果不希望按紐形式，可把內容抽換成別種function
     document.getElementById('logoutButton').addEventListener('click', async function () {
         // 勿修改
