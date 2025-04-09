@@ -7,13 +7,6 @@ yarn-error.log*
 .npm/
 .mvn/
 
-# 環境變數檔案
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 # Python
 *.py[cod]
 __pycache__/
