@@ -51,6 +51,7 @@ public class KeycloakController {
     private String clientSecret;
 
     /**
+     * *必要*
      * 處理從 Keycloak 認證後重導向回來的請求。
      * <p>
      * 本方法使用授權碼向 Keycloak 取得存取憑證 (access token) 與更新憑證 (refresh token)，
@@ -127,6 +128,7 @@ public class KeycloakController {
     }
 
     /**
+     * *必要*
      * 使用提供的 refresh token 呼叫 Keycloak 的登出 API，撤銷更新憑證。
      * <p>
      * 此方法將 refresh token 與 client 資訊作為參數傳遞至 Keycloak 登出端點，
@@ -163,6 +165,7 @@ public class KeycloakController {
     }
 
     /**
+     * *必要*
      * 檢查指定的 access token 是否有效，並在必要時使用 refresh token 進行續期。
      * <p>
      * 此方法會先呼叫 Keycloak 的 introspection 端點檢查存取憑證 (access token) 的有效性，

@@ -1,11 +1,15 @@
-server:
-  port: 8081
-  servlet:
-    context-path: /
+# 必要START
+sso:
+  url: http://localhost:8080
+backend:
+  url: http://localhost:8081
+frontend:
+  url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html
+
 keycloak:
   auth-server-url: http://localhost:8080/
   realm: MLIExternalRealm
-  clientId: test # Ensure this matches your Keycloak client's `client_id`
+  clientId: test
   public-client: false
   cors: true
   credentials:
@@ -16,7 +20,8 @@ keycloak:
     - authRoles: default-roles-MLIExternalRealm
       securityCollections:
         - patterns:
-            - /* # The paths requiring admin access
+            - /* # 需要登入的路徑
+# 必要END
 
 springdoc:
   api-docs:
@@ -24,10 +29,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-# 自定義參數
-sso:
-  url: http://localhost:8080
-backend:
-  url: http://localhost:8081
-frontend:
-  url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html
+server:
+  port: 8081
+  servlet:
+    context-path: /

@@ -1,60 +1,74 @@
-## SSO 客戶端整合教學文件
-
-本文件將指導您如何將 **SSO 客戶端** 整合到您的專案，並提供 **前端的設定步驟**，確保應用程式能順利與 SSO 服務對接。
-
----
-
+# 0. 測試前置作業
+為了啟動這個測試React專案：
+```bash
+npm install # 環境變數有改要再執行一次
+npm run start
+```
 # 1. 使用建議
+-  適用專案：**只有前端**，且需有 **npm** 管理的專案
 
-### 適用專案  
-✅ **只有前端**，且需有 **npm** 管理的專案
-
-### 整合方式  
-📌 **以下所有操作適用不同框架，但本專案使用 React，其他框架請自行確認套件安裝方式**
-📌 **請將所有必要檔案複製到您的專案後，再進行調整**
-
----
+- 整合方式： **以下所有操作適用不同框架，但本專案使用 React，其他框架請自行確認套件安裝方式**，**請將所有必要檔案複製到您的專案後，再進行調整**
 
 # 2. 必要檔案與修改說明
-
 ## 2.1 所有建置所需檔案
+**必要檔案**：  
+- `.env`：先把值都填好，按造需求訪談的結果填寫
+- `src/App.js` (需修改)
+    1. `App.js`有1個建立Keycloak實例，成功建立才能繼續
+        ```js
+        useEffect(() => {
+            // 建立新的 Keycloak 實例並傳入必要的配置參數
+            const keycloakInstance = new Keycloak({
+            url: ssoUrl, // 環境變數
+            realm: realm, // 環境變數
+            clientId: clientId, // 環境變數
+            });
+            // 初始化 Keycloak 實例，promiseType 設為 native 可使回傳結果為原生的 Promise
+            keycloakInstance
+            .init({
+                promiseType: "native",
+            })
+            .then((authenticated) => {
+                // 更新認證狀態與 Keycloak 實例
+                setIsAuthenticated(authenticated);
+                setKeycloak(keycloakInstance);
+            })
+            .catch((error) => console.error("Keycloak init failed:", error));
+        }, [clientId, realm, ssoUrl]);
+        ```
+    2. `App.js`裡面有3個使用Keycloak實例打sso端點的function，已標記必要，且對應SSO了，function不要改，目前是使用按鈕的形式，自行換其他觸發形式。
+    3. 其他看需求可微調，例如每幾秒請求一次，可自己寫迴圈請求這三個必要function，因為每個網站需求不同，沒辦法寫客製化，請前端工程師自行判斷需要判斷登入/登出的時機，這個串接只會有3種行為(`登入`、`登出`、`驗證`)，使用function無誤就不可能有程式面導致的驗證失敗狀況，客製化請參考程式註解
+    3. html只是為了使DEMO畫面正常
+- `index.html` (只是顯示DEMO畫面用)
+# 3. 使用判斷式達到全頁面控管權限
 
-📂 **必要檔案**：  
-1. `src/App.js` (需修改)
-2. 執行 `npm install` 下載 Keycloak 相關套件，此套件適用任何有 npm 管理的前端專案
-3. `src/keycloak.js` (完全不需修改，請從 `public/node_modules/keycloak-js/lib/keycloak.js` 複製過來)
+**3.1 決定哪些頁面需要登入驗證**  
 
----
+**若某些頁面需登入後才能訪問**，對該頁面卡關設計，將*判斷式*設為filter，或者在路由守衛放置這個邏輯(onClick以外行為請自行客製化)。
 
-## 2.2 `src/App.js` 修改
-
-📌 **請調整以下 3 個參數，確保它們符合您的 SSO 設定**：  
-
-```javascript
-const url = "http://localhost:8080";  // 你的後端服務地址
-const realm = "MLIExternalRealm";  // 你的 SSO Realm 名稱
-const clientId = "test-public";  // 你的客戶端 ID
+**應用示例**：  
+```js
+onClick={async () => {
+    try {
+    alert("Introspect 成功：" + JSON.stringify(keycloak.tokenParsed));
+    } catch (error) {
+    alert(
+        "Token 更新失敗：" +
+        (error.toString ? error.toString() : JSON.stringify(error))
+    );
+    console.error("Token update failed:", error);
+    }
+}}
 ```
+為什麼不檢查Session Cookie(Keycloak SSO存放token的地方)就好？前端 JavaScript 無法訪問 session cookie，因為設定了 HttpOnly 屬性 ，讓 JS 不能存取該 cookie。
 
-💡 **請與 SSO 負責人討論參數設定，確認後 `App.js` 可整合至登入頁面。**
-
----
-
-# 3. 登入驗證與頁面權限控制
-
-✅ **決定哪些頁面需要登入驗證**  
-在進入需要登入的頁面前，透過 **DOM 控制** 先執行「登入狀態驗證」。
-
-📌 **驗證邏輯位於 `App.js` 的登入按鈕處，可直接移植使用。**  
-
-💡 **應用示例**：  
-```javascript
-if (!verifyToken()) {
-    window.location.href = "/login.html";  // 若未登入，則導向登入頁面
-}
+DevTools > Application > Cookies
 ```
-
----
-
-📢 **🎯 恭喜！當您完成上述步驟後，即已成功整合 SSO！**  
-如需進一步的 SSO 調整或客製化，請聯繫您的 SSO 負責人或查閱 Keycloak 官方文件。 🚀
+Name:        JSESSIONID
+Value:       abcdef123456
+HttpOnly:    ✅
+Secure:      ✅
+``````
+```js
+console.log(document.cookie); // 印不出來這個 cookie
+```

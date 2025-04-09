@@ -33,9 +33,9 @@ function App() {
   useEffect(() => {
     // 建立新的 Keycloak 實例並傳入必要的配置參數
     const keycloakInstance = new Keycloak({
-      url: ssoUrl,
-      realm: realm,
-      clientId: clientId,
+      url: ssoUrl, // 環境變數
+      realm: realm, // 環境變數
+      clientId: clientId, // 環境變數
     });
     // 初始化 Keycloak 實例，promiseType 設為 native 可使回傳結果為原生的 Promise
     keycloakInstance
@@ -70,10 +70,13 @@ function App() {
           <p>用戶已登入</p>
           <p>用戶名稱: {keycloak.tokenParsed?.preferred_username || "未知"}</p>
           <p>郵箱: {keycloak.tokenParsed?.email || "未知"}</p>
+          {/* 必要 */}
           {/* 登出按鈕：呼叫 keycloak.logout() 執行登出 */}
           <button onClick={() => keycloak.logout()} style={{ marginRight: 10 }}>
             登出
           </button>
+
+          {/* 必要 */}
           {/* 驗證按鈕：透過匿名 async 函式驗證 token 內容，若成功則彈出訊息 */}
           <button
             onClick={async () => {
@@ -94,6 +97,7 @@ function App() {
       ) : (
         <div>
           <p>使用者未登入</p>
+          {/* 必要 */}
           {/* 登入按鈕：呼叫 keycloak.login() 跳轉至 Keycloak 登入頁面 */}
           <button onClick={() => keycloak.login()}>登入</button>
         </div>

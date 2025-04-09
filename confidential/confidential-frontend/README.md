@@ -8,7 +8,7 @@
 
 # 1. 你會用到的檔案與修改說明
 **必要檔案**：
-- `.env`：先把值都填好，按造需求訪談的結果填寫
+- `confidential-frontend/config.js`：先把值都填好，按造需求訪談的結果填寫，按造你的專案支援度可改成`.env`
 - `confidential-frontend/login.html`、`confidential-frontend/login.js`、`confidential-frontend/login.css`：
     1. login.js`裡面有3個打後端端點的function，已標記必要，與後端對應好了，url不要改。
     2. 其他看需求可微調，例如每幾秒請求一次，可自己寫迴圈請求這三個必要function，因為每個網站需求不同，沒辦法寫客製化，僅提供登入/登出判斷式，核心的請求url只要有以下任一套件即可AJAX、jQuery，請前端工程師自行判斷需要判斷登入/登出的時機，這個串接只會有3種行為(`登入`、`登出`、`驗證`)，前端打後端url，後端打SSO的url，SSO打後端url，url無誤就不可能有程式面導致的驗證失敗狀況，客製化請參考程式註解
