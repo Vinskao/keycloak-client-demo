@@ -1,10 +1,13 @@
 ﻿# 0. (可選)測試前置作業
-1. 請使用VS Code Live Server啟動
-![alt text](image.png)
-2. 點開`login.html`，按右下角啟動
-![alt text](image-1.png)
-- 登入頁面：`http://127.0.0.1:5500/confidential/confidential-frontend/login.html`
-
+- Runtime需求：
+    - VSCode
+- 專案需求：是原生前端頁面，無任何需求
+- 專案啟動：
+    1. 請使用VS Code Live Server啟動
+    ![alt text](image.png)
+    2. 點開`login.html`，按右下角啟動
+    ![alt text](image-1.png)
+    - 登入頁面：`http://127.0.0.1:5500/confidential/confidential-frontend/login.html`
 
 # 1. 你會用到的檔案與修改說明
 **必要檔案**：

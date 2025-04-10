@@ -5,4 +5,4 @@
 # 2. 開始
 
 1. 進入`\confidential-backend`完成後端串接
-2. 進入`\confidential-frontend`完成後端串接
+2. 進入`\confidential-frontend`完成前端串接

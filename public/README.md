@@ -1,9 +1,15 @@
 # 0. 測試前置作業
-為了啟動這個測試React專案：
-```bash
-npm install # 環境變數有改要再執行一次
-npm run start
-```
+- Runtime需求：
+    - Node.js v14
+    - NPM：建議使用 NPM 6.14.15（對應 Node.js v14）
+- 專案需求：
+    - React 18.3.1
+- 專案啟動：
+    ```bash
+    npm install # 環境變數有改要再執行一次
+    npm run start
+    ```
+
 # 1. 使用建議
 -  適用專案：**只有前端**，且需有 **npm** 管理的專案
 
@@ -19,9 +25,9 @@ npm run start
         useEffect(() => {
             // 建立新的 Keycloak 實例並傳入必要的配置參數
             const keycloakInstance = new Keycloak({
-            url: ssoUrl, // 環境變數
-            realm: realm, // 環境變數
-            clientId: clientId, // 環境變數
+                url: ssoUrl, // 環境變數
+                realm: realm, // 環境變數
+                clientId: clientId, // 環境變數
             });
             // 初始化 Keycloak 實例，promiseType 設為 native 可使回傳結果為原生的 Promise
             keycloakInstance
@@ -72,3 +78,11 @@ Secure:      ✅
 ```js
 console.log(document.cookie); // 印不出來這個 cookie
 ```
+
+
+# 4. 最終完成檢核點：4個function是否實作完成
+無論使用什麼前端，只要能裝keycloak-js套件，都可以實作完成這4個function，達成前端串接
+1. **創建Keycloak實例**： 在組件首次渲染時執行，用以建立及初始化 Keycloak 實例，並將認證狀態與 Keycloak 實例儲存到 state 中。若發生錯誤，則在 console 中顯示。依賴陣列包含 clientId、realm 與 ssoUrl，確保設定變數改變時重新初始化。
+2. **登入**：呼叫 `keycloak.login()` 跳轉至 Keycloak 登入頁面 
+3. **登出**：呼叫 `keycloak.logout()` 執行登出
+4. **驗證**：透過`JSON.stringify(keycloak.tokenParsed)`驗證 token 內容，若成功則彈出訊息
