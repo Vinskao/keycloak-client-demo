@@ -72,10 +72,16 @@ SSO能確保你可以使用其登入驗證功能，但要保護你的訪問權�
 ### 3.2 架構
 SSO 登入的最大好處是可以根據功能區分成受保護區域/未受保護區域，受保護區域需要登入才能訪問。以下展示從使用者角度出發，登入SSO後，可以無輸入帳密直接登入每個有串接同REALM的系統，使用者登入後，對多個系統的的登入有效時間都由同REALM管理，失效前不用重複登入。
 
-#### Confidential Client 前後端
-![alt text](ConfidentialClient.drawio.png)
-#### Public Client 前端
-![alt text](PublicClient.drawio.png)
+<div style="display: flex; gap: 16px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <h4>Confidential Client 前後端</h4>
+    <img src="ConfidentialClient.drawio.png" alt="Confidential Client" style="max-width: 100%;">
+  </div>
+  <div style="flex: 1;">
+    <h4>Public Client 前端</h4>
+    <img src="PublicClient.drawio.png" alt="Public Client" style="max-width: 100%;">
+  </div>
+</div>
 
 如果Confidential/Public Client都有在SSO介面勾選Standard Flow(Authorization Code Flow)，且為同REALM，那也是可以互相登入的。
 
