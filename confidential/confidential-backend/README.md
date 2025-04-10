@@ -32,7 +32,22 @@
 - 假設後端工程師已將CORS等其他後端設定自行設定好，不贅述
 
 # 3. 最終完成檢核點：3個端點/function是否實作完成
-無論使用什麼後端，只要能裝`oauth2-client`、`oauth2-resource-server`、同等`keycloak-spring-boot-starter:25.0.3`，都可以實作完成這三個端點，任何能實作轉打、請求url的後端語言及框架都可以達成
-1. **登入**：使用授權碼(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token"`)向 Keycloak 取得存取憑證 (access token) 與更新憑證 (refresh token)，並呼叫 userinfo 端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/userinfo"`)以獲取使用者資訊。成功取得資料後，會將使用者名稱、電子郵件、access token 以及 refresh token 附加至前端 URL 並進行重導向。
-2. **登出**：將 refresh token 與 client 資訊作為參數傳遞至 Keycloak 登出端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/logout"`)，若成功則回傳登出成功訊息；若失敗則回傳錯誤訊息。
-3. **驗證**：先呼叫 Keycloak 的 introspection 端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token/introspect"`)檢查存取憑證 (access token) 的有效性，若 token 有效則直接回傳檢查結果；若 token 無效且同時提供了 refresh token，則會嘗試透過 refresh token 來刷新存取憑證，若刷新成功，則回傳新取得的 token 資訊並增加 "refreshed" 標記；若刷新失敗，則回傳未授權狀態。
+無論使用什麼後端，只要能裝`oauth2-client`、`oauth2-resource-server`、同等`keycloak-spring-boot-starter:25.0.3`，都可以實作完成這三個端點，任何能實作轉打、請求url的後端語言及框架都可以達成，以下url除了`authServerUrl`、`backendUrl`、`realm`是環境變數以外，其他都是Keycloak規範範疇。
+1. **登入**：
+    1.  封裝請求用token，tokenParams包含：
+        - client_id：從環境變數取得
+        - client_secret：從環境變數取得
+        - code：從 Keycloak 傳回的授權碼
+        - grant_type：固定為authorization_code
+        - redirect_uri：`backendUrl + "/keycloak/redirect"`
+    2.  使用授權碼(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token"`)向 Keycloak 取得存取憑證 (access token) 與更新憑證 (refresh token)
+    3. 呼叫 userinfo 端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/userinfo"`)以獲取使用者資訊。
+    4. 成功取得資料後，會將使用者名稱、電子郵件、access token 以及 refresh token 附加至前端 URL 並進行重導向。
+
+2. **登出**：
+    1. 將 refresh token 與 client 資訊作為參數傳遞至 Keycloak 登出端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/logout"`)
+    2. 若成功則回傳登出成功訊息；若失敗則回傳錯誤訊息。
+3. **驗證**：
+    1. 先呼叫 Keycloak 的 introspection 端點(`authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token/introspect"`)檢查存取憑證 (access token) 的有效性
+    2. 若 token 有效則直接回傳檢查結果；若 token 無效且同時提供了 refresh token，則會嘗試透過 refresh token 來刷新存取憑證
+    4. 若刷新成功，則回傳新取得的 token 資訊並增加 "refreshed" 標記；若刷新失敗，則回傳未授權狀態。
