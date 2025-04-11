@@ -1,5 +1,5 @@
 # 0. 測試前置作業
-對於要裝keycloak SSO 互動套件的專案才有系統需求，也就是public前端、Confidential後端，需求是按照互動套件的版本而定，互動套件的版本與SSO Server一致，請與SSO負責人確認版本，基本上在此demo以後都是使用 Keycloak 26.1.3 以後，此處將提供Spring Boot版本需求，其他後端語言及框架請自行找Keycloak 26.1.3 (或以後)對應版本
+對於需要整合 keycloak SSO 互動套件的專案才有系統需求，也就是public前端、Confidential後端，需求則取決於互動套件的版本，該版本應與 SSO Server 相符，請與SSO負責人確認版本，基本上從此 Demo 起皆建議使用 Keycloak 26.1.3 以上版本，此處將提供Spring Boot版本需求，其他後端語言及框架請參考相應的 Keycloak 26.1.3（或以上）版本
 - Runtime需求：
     - Java 17
     - Maven 3.9.6
@@ -25,7 +25,7 @@
 ## 2.1 所有建置所需檔案
 **必要檔案**：  
 - `pom.xml`：標記必要套件必裝
-- `\src\main\resources\application.yml`：先把值都填好，按造需求訪談的結果填寫
+- `\src\main\resources\application.yml`：先把值都填好，按照需求訪談的結果填寫
 - `KeycloakController.java` (需修改)
     1. `KeycloakController.java`裡面有3個打sso端點的function，已標記必要，且對應SSO了，url不要改
     2. 其他看需求可微調，例如每幾秒請求一次，可自己寫迴圈請求這三個必要function，因為每個網站需求不同，沒辦法寫客製化，請前端工程師自行判斷需要判斷登入/登出的時機，這個串接只會有3種行為(`登入`、`登出`、`驗證`)，前端打後端url，後端打SSO的url，SSO打後端url，url無誤就不可能有程式面導致的驗證失敗狀況，客製化請參考程式註解

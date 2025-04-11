@@ -10,6 +10,7 @@
     - 登入頁面：`http://127.0.0.1:5500/confidential/confidential-frontend/login.html`
 
 # 1. 你會用到的檔案與修改說明
+在confidential client，前端不是負責與keycloak交互者，所以你要用什麼前端都沒影響，只要能請求後端就行了。
 **必要檔案**：
 - `confidential-frontend/config.js`：先把值都填好，按造需求訪談的結果填寫，按造你的專案支援度可改成`.env`
 - `confidential-frontend/login.html`、`confidential-frontend/login.js`、`confidential-frontend/login.css`：
