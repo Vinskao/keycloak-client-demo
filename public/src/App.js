@@ -81,13 +81,16 @@ function App() {
           <button
             onClick={async () => {
               try {
+                // 檢查 token 是否至少還有 5 秒有效時間，否則自動使用 refreshToken 嘗試更新
+                await keycloak.updateToken(5);
+
                 alert("Introspect 成功：" + JSON.stringify(keycloak.tokenParsed));
               } catch (error) {
-                alert(
-                  "Token 更新失敗：" +
-                  (error.toString ? error.toString() : JSON.stringify(error))
-                );
-                console.error("Token update failed:", error);
+                console.error("Token 更新失敗:", error);
+
+                // 嘗試刷新失敗，視為未登入狀態
+                setIsAuthenticated(false);
+                alert("Token 過期，請重新登入。");
               }
             }}
           >
