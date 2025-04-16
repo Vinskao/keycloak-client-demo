@@ -212,8 +212,10 @@ public class KeycloakController {
             @RequestParam(value = "refreshToken", required = false) String refreshToken) {
     
         String introspectUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token/introspect";
+        String tokenUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
     
         try {
+            // Step 1: 驗證 access token 是否仍有效
             MultiValueMap<String, String> bodyParams = new LinkedMultiValueMap<>();
             bodyParams.add("client_id", clientId);
             bodyParams.add("client_secret", clientSecret);
@@ -227,21 +229,38 @@ public class KeycloakController {
                     introspectUrl, HttpMethod.POST, entity, Map.class);
             Map<String, Object> result = introspectResponse.getBody();
     
+            // Step 2: 如果 token 還有效，直接回傳
             if (result != null && Boolean.TRUE.equals(result.get("active"))) {
                 return ResponseEntity.ok(result);
             }
     
-            // 嘗試 refresh token（可選）
+            // Step 3: token 無效，嘗試用 refresh token 取得新 token
             if (refreshToken != null && !refreshToken.isEmpty()) {
-                // refresh token 的處理邏輯，跟 redirect 中取得 token 類似
-                // 可考慮回傳新的 token 給前端 (需考慮安全性)
+                MultiValueMap<String, String> refreshParams = new LinkedMultiValueMap<>();
+                refreshParams.add("grant_type", "refresh_token");
+                refreshParams.add("client_id", clientId);
+                refreshParams.add("client_secret", clientSecret);
+                refreshParams.add("refresh_token", refreshToken);
+    
+                HttpEntity<MultiValueMap<String, String>> refreshEntity = new HttpEntity<>(refreshParams, headers);
+    
+                ResponseEntity<Map> refreshResponse = restTemplate.exchange(
+                        tokenUrl, HttpMethod.POST, refreshEntity, Map.class);
+                Map<String, Object> refreshResult = refreshResponse.getBody();
+    
+                if (refreshResult != null && refreshResult.get("access_token") != null) {
+                    // 回傳新的 access token 及相關資訊
+                    return ResponseEntity.ok(refreshResult);
+                }
             }
     
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效");
+            // Step 4: 無法刷新，回傳 UNAUTHORIZED
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效或刷新失敗");
         } catch (Exception e) {
             log.error("introspect failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Token 檢查失敗");
         }
     }
+    
     
 }
