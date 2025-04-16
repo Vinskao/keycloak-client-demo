@@ -7,13 +7,12 @@ frontend:
   url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html
 
 keycloak:
-  auth-server-url: http://localhost:8080/
   realm: MLIExternalRealm
   clientId: test
   public-client: false
   cors: true
   credentials:
-    secret: d4krdfaNRp4tZwR1ZQ2bMRBfVkEx0Bks
+    secret: ztnlJA1yQs5lDbVCqg0BAu6NzeWC1iCR
 
   bearer-only: true
   security-constraints:

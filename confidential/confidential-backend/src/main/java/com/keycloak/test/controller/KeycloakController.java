@@ -16,6 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -160,7 +161,7 @@ public class KeycloakController {
      * @return ResponseEntity 包含登出操作結果的訊息與狀態碼。
      */
     @CrossOrigin
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestParam("refreshToken") String refreshToken) {
         // 組合 Keycloak 的登出 endpoint URL
         String logoutUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/logout";
@@ -205,78 +206,42 @@ public class KeycloakController {
      * @return ResponseEntity 包含 token 檢查結果、刷新後的 token 資訊或錯誤訊息的回應。
      */
     @CrossOrigin
-    @GetMapping("/introspect")
+    @PostMapping("/introspect")
     public ResponseEntity<?> introspectToken(
             @RequestParam("token") String token,
             @RequestParam(value = "refreshToken", required = false) String refreshToken) {
-
-        // 組合 introspection 請求 URL
+    
         String introspectUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token/introspect";
-
+    
         try {
-            // 1. 呼叫 introspection 端點檢查存取憑證是否仍有效
             MultiValueMap<String, String> bodyParams = new LinkedMultiValueMap<>();
             bodyParams.add("client_id", clientId);
             bodyParams.add("client_secret", clientSecret);
             bodyParams.add("token", token);
-
+    
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
-
-            // 發送 POST 請求檢查 token 有效性
-            ResponseEntity<Map> introspectResponse = restTemplate.exchange(introspectUrl, HttpMethod.POST, entity,
-                    Map.class);
-            Map<String, Object> introspectionResult = introspectResponse.getBody();
-
-            // 若 token 有效則直接回傳 introspection 結果
-            if (introspectionResult != null && Boolean.TRUE.equals(introspectionResult.get("active"))) {
-                return ResponseEntity.ok(introspectionResult);
+    
+            ResponseEntity<Map> introspectResponse = restTemplate.exchange(
+                    introspectUrl, HttpMethod.POST, entity, Map.class);
+            Map<String, Object> result = introspectResponse.getBody();
+    
+            if (result != null && Boolean.TRUE.equals(result.get("active"))) {
+                return ResponseEntity.ok(result);
             }
-            // 2. 若 token 無效且有提供 refresh token，嘗試刷新 token
-            else if (refreshToken != null && !refreshToken.isEmpty()) {
-                log.info("Access token is invalid, attempting to refresh...");
-
-                // 組合刷新 token 的 URL
-                String tokenUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
-                
-                // 封裝刷新 token 的請求參數
-                MultiValueMap<String, String> tokenParams = new LinkedMultiValueMap<>();
-                tokenParams.add("client_id", clientId);
-                tokenParams.add("client_secret", clientSecret);
-                tokenParams.add("refresh_token", refreshToken);
-                tokenParams.add("grant_type", "refresh_token");
-
-                HttpHeaders refreshHeaders = new HttpHeaders();
-                refreshHeaders.set("Content-Type", "application/x-www-form-urlencoded");
-                HttpEntity<MultiValueMap<String, String>> refreshEntity = new HttpEntity<>(tokenParams, refreshHeaders);
-
-                try {
-                    // 發送刷新 token 請求
-                    ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, refreshEntity, Map.class);
-                    
-                    if (tokenResponse.getStatusCode().is2xxSuccessful()) {
-                        // 刷新成功，取得新的 token 資訊，加入 refreshed 標記後回傳
-                        Map<String, Object> tokenInfo = tokenResponse.getBody();
-                        tokenInfo.put("refreshed", true);
-                        return ResponseEntity.ok(tokenInfo);
-                    }
-                } catch (Exception e) {
-                    log.error("Error refreshing token", e);
-                    // 若刷新失敗，則繼續回傳未授權資訊
-                }
+    
+            // 嘗試 refresh token（可選）
+            if (refreshToken != null && !refreshToken.isEmpty()) {
+                // refresh token 的處理邏輯，跟 redirect 中取得 token 類似
+                // 可考慮回傳新的 token 給前端 (需考慮安全性)
             }
-            
-            // 若 token 無效且無法刷新，回傳 401 UNAUTHORIZED 與失敗訊息
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    Map.of("active", false, "error", "Token is not active or invalid, and refresh failed.")
-            );
+    
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效");
         } catch (Exception e) {
-            // 若發生錯誤，記錄錯誤並回傳 500 INTERNAL_SERVER_ERROR 與錯誤訊息
-            log.error("Error during token introspection/refresh", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    Map.of("error", "Error processing token.")
-            );
+            log.error("introspect failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Token 檢查失敗");
         }
     }
+    
 }
