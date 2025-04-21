@@ -1674,6 +1674,8 @@
         "config": {}
       }
     ],
+    "org.keycloak.storage.UserStorageProvider": [
+    ],
     "org.keycloak.userprofile.UserProfileProvider": [
       {
         "id": "83b58fc8-1e94-415e-ad1d-6f4638fc3f68",
