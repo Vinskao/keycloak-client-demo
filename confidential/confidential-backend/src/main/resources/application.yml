@@ -7,7 +7,7 @@ frontend:
   url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html
 
 keycloak:
-  realm: MLIExternalRealm
+  realm: DemoRealm
   clientId: test
   public-client: false
   cors: true
@@ -16,7 +16,7 @@ keycloak:
 
   bearer-only: true
   security-constraints:
-    - authRoles: default-roles-MLIExternalRealm
+    - authRoles: default-roles-DemoRealm
       securityCollections:
         - patterns:
             - /* # 需要登入的路徑
