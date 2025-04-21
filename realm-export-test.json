@@ -1,6 +1,6 @@
 {
   "id": "MliAmo",
-  "realm": "DemoRealm",
+  "realm": "MLIExternalRealm",
   "displayName": "",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -484,13 +484,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/DemoRealm/account/",
+      "baseUrl": "/realms/MLIExternalRealm/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/DemoRealm/account/*"
+        "/realms/MLIExternalRealm/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -530,13 +530,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/DemoRealm/account/",
+      "baseUrl": "/realms/MLIExternalRealm/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/DemoRealm/account/*"
+        "/realms/MLIExternalRealm/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -712,13 +712,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/DemoRealm/console/",
+      "baseUrl": "/admin/MLIExternalRealm/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/DemoRealm/console/*"
+        "/admin/MLIExternalRealm/console/*"
       ],
       "webOrigins": [
         "+"
@@ -1672,25 +1672,6 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {}
-      }
-    ],
-    "org.keycloak.storage.UserStorageProvider": [
-      {
-        "id": "3abc16b2-5146-410d-82d7-79e09312c3e6",
-        "name": "informix",
-        "providerId": "informix",
-        "subComponents": {},
-        "config": {
-          "cachePolicy": [
-            "NO_CACHE"
-          ],
-          "priority": [
-            "0"
-          ],
-          "enabled": [
-            "true"
-          ]
-        }
       }
     ],
     "org.keycloak.userprofile.UserProfileProvider": [
