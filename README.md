@@ -1,5 +1,4 @@
 [TOC]
-
 ---
 
 三商美邦人壽 單一登入系統 (Single Sign-On, SSO) 分別提供兩種驗證方式:
@@ -39,7 +38,31 @@
 7. **正式上線，提交申請單**-填寫 OA 申請單 `S207-01-系統操作暨變更申請單`
    - 申請所需填寫的資訊將由 SSO 負責人提供給您
 
-<img src="Process.drawio.png" alt="Confidential Client" style="max-width: 100%;">
+### 行政流程架構
+```mermaid
+graph TD
+    A[準備前置資料] --> B[需求訪談]
+    B --> C[測試環境申請]
+    C --> D[取得串接資料]
+    D --> E[開發整合]
+    E --> F[測試驗證]
+    F --> G[正式上線申請]
+    
+    subgraph 前置準備
+    A
+    end
+    
+    subgraph 開發階段
+    D
+    E
+    F
+    end
+    
+    subgraph 申請流程
+    C
+    G
+    end
+```
 
 ### 需求訪談前你應該要確認與準備的資訊
 
@@ -71,6 +94,33 @@
 ---
 
 以上為公司內部串接 SSO 的初始行政流程，接下來將進入技術實作部分。
+### 技術架構圖
+```mermaid
+graph TB
+    subgraph SSO系統
+        K[Keycloak Server]
+    end
+    
+    subgraph Confidential Client架構
+        CC[前端應用]
+        BC[後端服務]
+        BC -->|Token驗證| K
+        CC -->|授權請求| K
+        CC -->|API請求| BC
+    end
+    
+    subgraph Public Client架構
+        PC[前端應用]
+        PC -->|直接與SSO互動| K
+    end
+    
+    subgraph 驗證流程
+        direction TB
+        A1[登入] --> A2[Token驗證]
+        A2 --> A3[資源訪問]
+        A3 --> A4[登出]
+    end
+```
 
 ---
 
@@ -170,6 +220,24 @@ Confidential 與 Public Client 都是從前端發起呼叫一個能與SSO互動�
 
 * OAuth 2.0 負責授權 (讓應用程式能安全地存取 API)。
 * OIDC 負責身份驗證 (確認使用者的身份，並提供基本資料)。
+
+### OAuth 2.0/OIDC流程圖
+```mermaid
+sequenceDiagram
+    participant User as 使用者
+    participant App as 應用程式
+    participant Auth as 授權伺服器
+    participant API as 資源伺服器
+    
+    User->>App: 1. 訪問應用
+    App->>Auth: 2. 重定向到授權頁面
+    User->>Auth: 3. 登入並授權
+    Auth->>App: 4. 返回授權碼
+    App->>Auth: 5. 用授權碼換取Token
+    Auth->>App: 6. 返回Access Token
+    App->>API: 7. 使用Token訪問資源
+    API->>App: 8. 返回受保護資源
+```
 
 ### OAuth 2.0：授權標準
 
