@@ -1,6 +1,6 @@
 {
   "id": "MliAmo",
-  "realm": "MLIExternalRealm",
+  "realm": "DemoRealm",
   "displayName": "",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -484,13 +484,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/MLIExternalRealm/account/",
+      "baseUrl": "/realms/DemoRealm/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/MLIExternalRealm/account/*"
+        "/realms/DemoRealm/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -530,13 +530,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/MLIExternalRealm/account/",
+      "baseUrl": "/realms/DemoRealm/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/MLIExternalRealm/account/*"
+        "/realms/DemoRealm/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -712,13 +712,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/MLIExternalRealm/console/",
+      "baseUrl": "/admin/DemoRealm/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/MLIExternalRealm/console/*"
+        "/admin/DemoRealm/console/*"
       ],
       "webOrigins": [
         "+"
