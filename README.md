@@ -39,6 +39,8 @@
 7. **正式上線，提交申請單**-填寫 OA 申請單 `S207-01-系統操作暨變更申請單`
    - 申請所需填寫的資訊將由 SSO 負責人提供給您
 
+<img src="Process.drawio.png" alt="Confidential Client" style="max-width: 100%;">
+
 ### 需求訪談前你應該要確認與準備的資訊
 
 | 項目  | 說明  | 
