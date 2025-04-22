@@ -1,5 +1,27 @@
 # 0. 測試前置作業
 只要能安裝 [keycloak-js](https://www.npmjs.com/package/keycloak-js) 的前端，都能適用，**以下所有操作適用不同框架，但本專案使用 React，其他框架請自行確認套件安裝方式**，**請將所有必要檔案複製到您的專案後，再進行調整**
+
+### 認證流程圖
+```mermaid
+sequenceDiagram
+    participant User as 使用者
+    participant Frontend as 前端應用
+    participant SSO as Keycloak SSO
+    
+    User->>Frontend: 1. 訪問應用
+    Frontend->>SSO: 2. 重定向到SSO登入頁
+    User->>SSO: 3. 輸入帳密
+    SSO->>Frontend: 4. 返回授權碼
+    Frontend->>SSO: 5. 用授權碼換取Token
+    SSO->>Frontend: 6. 返回Access Token
+    Frontend->>User: 7. 顯示登入成功
+    
+    Note over Frontend: Token驗證流程
+    Frontend->>SSO: 8. 驗證Token
+    SSO->>Frontend: 9. Token有效
+    Frontend->>User: 10. 顯示受保護資源
+```
+
 - 適用專案：**只有前端**，且需有 **npm** 管理的專案
 - Runtime需求(是React 18需求，不代表你的專案一定如此)：
     - Node.js v14
@@ -71,7 +93,7 @@ Name:        JSESSIONID
 Value:       abcdef123456
 HttpOnly:    ✅
 Secure:      ✅
-``````
+```
 ```js
 console.log(document.cookie); // 印不出來這個 cookie
 ```
