@@ -2,6 +2,7 @@ package com.keycloak.test.controller;
 
 import java.io.IOException;
 import java.util.Map;
+import java.net.URLEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,14 +133,21 @@ public class KeycloakController {
             }
 
             // 從使用者資訊中取得電子郵件
-            String email = (String) userInfo.get("email");
-
+            String email = userInfo.get("email") != null ? (String) userInfo.get("email") : "未知";
+            String name = userInfo.get("name") != null ? (String) userInfo.get("name") : "未知";
+            String firstName = userInfo.get("given_name") != null ? (String) userInfo.get("given_name") : "未知";
+            String lastName = userInfo.get("family_name") != null ? (String) userInfo.get("family_name") : "未知";
+            
             // 組合重導向 URL，將使用者資訊與 tokens 附加至 query string 中
             String redirectTarget = frontendUrl
-                + "?username=" + preferredUsername
-                + "&email=" + email
-                + "&token=" + accessToken
-                + "&refreshToken=" + refreshToken;
+                + "?username=" + URLEncoder.encode(preferredUsername, "UTF-8")
+                + "&email=" + URLEncoder.encode(email, "UTF-8")
+                + "&name=" + URLEncoder.encode(name, "UTF-8")
+                + "&firstName=" + URLEncoder.encode(firstName, "UTF-8")
+                + "&lastName=" + URLEncoder.encode(lastName, "UTF-8")
+                + "&token=" + URLEncoder.encode(accessToken, "UTF-8")
+                + "&refreshToken=" + URLEncoder.encode(refreshToken, "UTF-8");
+        
             // 執行 HTTP 重導向
             response.sendRedirect(redirectTarget);
         } catch (Exception e) {

@@ -68,8 +68,11 @@ function App() {
       {isAuthenticated ? (
         <div>
           <p>用戶已登入</p>
-          <p>用戶名稱: {keycloak.tokenParsed?.preferred_username || "未知"}</p>
-          <p>郵箱: {keycloak.tokenParsed?.email || "未知"}</p>
+          <p>username: {keycloak.tokenParsed?.preferred_username || "未知"}</p>
+          <p>email: {keycloak.tokenParsed?.email || "未知"}</p>
+          <p>name: {keycloak.tokenParsed?.name || "未知"}</p>
+          <p>firstname: {keycloak.tokenParsed?.given_name || "未知"}</p>
+          <p>lastname: {keycloak.tokenParsed?.family_name || "未知"}</p>
           {/* 必要 */}
           {/* 登出按鈕：呼叫 keycloak.logout() 執行登出 */}
           <button onClick={() => keycloak.logout()} style={{ marginRight: 10 }}>

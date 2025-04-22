@@ -1,22 +1,22 @@
 # 必要START
 sso:
-  url: http://localhost:8080
+  url: https://sso-agent-uat.mli.com.tw
 backend:
   url: http://localhost:8081
 frontend:
   url: http://127.0.0.1:5500/confidential/confidential-frontend/login.html
 
 keycloak:
-  realm: DemoRealm
+  realm: MLIExternalRealm
   clientId: test
   public-client: false
   cors: true
   credentials:
-    secret: ztnlJA1yQs5lDbVCqg0BAu6NzeWC1iCR
+    secret: zDMMBBO4ddLeYXnHp828kkby7eeN9yZy
 
   bearer-only: true
   security-constraints:
-    - authRoles: default-roles-DemoRealm
+    - authRoles: default-roles-MLIExternalRealm
       securityCollections:
         - patterns:
             - /* # 需要登入的路徑

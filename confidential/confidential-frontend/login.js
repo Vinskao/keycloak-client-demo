@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const usernameParam = urlParams.get('username');
     const emailParam = urlParams.get('email');
+    const nameParam = urlParams.get('name');
+    const firstnameParam = urlParams.get('firstName');
+    const lastnameParam = urlParams.get('lastName');
     const accessToken = urlParams.get('token');
     const refreshToken = urlParams.get('refreshToken'); // 確保後端 redirect 時也帶入此參數
 
@@ -22,8 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isValid) {
                 document.getElementById('loginButton').style.display = 'none';
                 document.getElementById('userInfo').style.display = 'block';
-                document.getElementById('username').textContent = `用戶名: ${usernameParam || '未知'}`;
-                document.getElementById('email').textContent = `郵箱: ${emailParam || '未知'}`;
+                document.getElementById('username').textContent = `username: ${usernameParam || '未知'}`;
+                document.getElementById('name').textContent = `name: ${nameParam || '未知'}`;
+                document.getElementById('email').textContent = `email: ${emailParam || '未知'}`;
+                document.getElementById('firstname').textContent = `firstname: ${firstnameParam || '未知'}`;
+                document.getElementById('lastname').textContent = `lastname: ${lastnameParam || '未知'}`;
+
                 document.getElementById('statusText').textContent = "使用者已登入";
             } else {
                 document.getElementById('statusText').textContent = "登入會話已失效，請重新登入";
